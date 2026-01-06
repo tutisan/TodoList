@@ -33,6 +33,13 @@ public class TodoListController : ControllerBase
         return Ok(items.ToList());
     }
 
+    [HttpGet("done")]
+    public IActionResult GetDoneTaskItems()
+    {
+        var items = _dbContext.TaskItems.Where(item => item.IsDone == true);
+        return Ok(items.ToList());
+    }
+
     [HttpGet("{taskId}")]
     public IActionResult GetSingleTaskItem(Guid taskId)
     {
