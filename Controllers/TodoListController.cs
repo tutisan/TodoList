@@ -8,13 +8,16 @@ namespace TodoList.Controllers;
 [Route("[controller]")]
 public class TodoListController : ControllerBase
 {
+    #region Controller setup
     private readonly TodoListDbContext _dbContext;
 
     public TodoListController()
     {
         _dbContext = new TodoListDbContext();
     }
+    #endregion
 
+    #region Endpoints
     [HttpPost]
     public IActionResult CreateTaskItem(TaskItem taskItem)
     {
@@ -44,4 +47,5 @@ public class TodoListController : ControllerBase
     {
         throw new NotImplementedException();
     }
+    #endregion
 }
