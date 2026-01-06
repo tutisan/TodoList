@@ -1,6 +1,14 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+namespace TodoList;
 
-app.Run();
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        var app = WebApplication.Create(args);
+
+        app.MapGet("/", () => "Hello, world!");
+
+        app.Run();
+    }
+}
