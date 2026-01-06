@@ -21,7 +21,9 @@ public class TodoListController : ControllerBase
     [HttpPost]
     public IActionResult CreateTaskItem(TaskItem taskItem)
     {
-        throw new NotImplementedException();
+        _dbContext.TaskItems.Add(taskItem);
+        _dbContext.SaveChanges();
+        return Created("Task created", taskItem);
     }
 
     [HttpGet]
