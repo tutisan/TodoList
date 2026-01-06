@@ -5,10 +5,11 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var app = WebApplication.Create(args);
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddControllers();
 
-        app.MapGet("/", () => "Hello, world!");
-
+        var app = builder.Build();
+        app.MapControllers();
         app.Run();
     }
 }
