@@ -49,7 +49,17 @@ public class TodoListController : ControllerBase
     [HttpPut("{taskId}")]
     public IActionResult UpdateTaskItem(Guid taskId, TaskItem taskItem)
     {
-        throw new NotImplementedException();
+        var item = _dbContext.TaskItems.Find(taskId);
+        
+        if (item != null)
+        {
+            item.Name = taskItem.Name;
+            item.IsDone = taskItem.IsDone;
+            _dbContext.SaveChanges();
+            return Ok(item);
+        }
+
+        return NotFound();
     }
 
     [HttpDelete("{taskId}")]
