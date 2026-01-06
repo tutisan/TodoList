@@ -36,7 +36,14 @@ public class TodoListController : ControllerBase
     [HttpGet("{taskId}")]
     public IActionResult GetTaskItemById(Guid taskId)
     {
-        throw new NotImplementedException();
+        var item = _dbContext.TaskItems.Find(taskId);
+
+        if (item != null)
+        {
+            return Ok(item);
+        }
+
+        return NotFound();
     }
 
     [HttpPut("{taskId}")]
