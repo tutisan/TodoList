@@ -34,7 +34,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpGet("{taskId}")]
-    public IActionResult GetTaskItemById(Guid taskId)
+    public IActionResult GetSingleTaskItem(Guid taskId)
     {
         var item = _dbContext.TaskItems.Find(taskId);
 
