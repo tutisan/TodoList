@@ -65,7 +65,16 @@ public class TodoListController : ControllerBase
     [HttpDelete("{taskId}")]
     public IActionResult DeleteTaskItem(Guid taskId)
     {
-        throw new NotImplementedException();
+        var item = _dbContext.TaskItems.Find(taskId);
+
+        if (item != null)
+        {
+            _dbContext.TaskItems.Remove(item);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
+
+        return NotFound();
     }
     #endregion
 }
