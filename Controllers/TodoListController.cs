@@ -29,7 +29,8 @@ public class TodoListController : ControllerBase
     [HttpGet]
     public IActionResult GetAllTaskItems()
     {
-        throw new NotImplementedException();
+        var items = _dbContext.TaskItems;
+        return Ok(items.ToList());
     }
 
     [HttpGet("{taskId}")]
