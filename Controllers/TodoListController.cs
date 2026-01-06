@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TodoList.Data;
 using TodoList.Models;
 
 namespace TodoList.Controllers;
@@ -7,6 +8,13 @@ namespace TodoList.Controllers;
 [Route("[controller]")]
 public class TodoListController : ControllerBase
 {
+    private readonly TodoListDbContext _dbContext;
+
+    public TodoListController()
+    {
+        _dbContext = new TodoListDbContext();
+    }
+
     [HttpPost]
     public IActionResult CreateTaskItem(TaskItem taskItem)
     {
