@@ -5,7 +5,8 @@ namespace TodoList.Data;
 
 public class TodoListDbContext : DbContext
 {
-    public DbSet<TaskItem> TaskItems { get; set;}
+    public DbSet<Account> Accounts { get; set; }
+    public DbSet<TaskItem> TaskItems { get; set; }
 
     public string DbPath { get; }
     
