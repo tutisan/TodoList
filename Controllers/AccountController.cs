@@ -20,6 +20,40 @@ public class AccountController : ControllerBase
     }
     #endregion
 
+    #region Debug endpoints
+    [HttpGet("debug/list_users")]
+    public IActionResult ListUserAndPasswords()
+    {
+        return Ok(_dbContext.Accounts.ToList());
+    }
+
+    [HttpPost("debug/validate_login")]
+    public IActionResult ValidateLogin(AccountCreateDTO createDTO)
+    {
+        var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == createDTO.Username);
+
+        if (user != null)
+        {
+            byte[] passwordHash = KeyDerivation.Pbkdf2(
+                createDTO.Password,
+                user.PasswordSalt,
+                KeyDerivationPrf.HMACSHA256,
+                user.PasswordIterationCount,
+                256/8
+            );
+            
+            if (user.PasswordHash.SequenceEqual(passwordHash))
+            {
+                return Ok("Login is valid.");
+            }
+
+            return Ok("Login is invalid.");
+        }
+
+        return Ok("User not found.");
+    }
+    #endregion
+
     #region Endpoints
     [HttpPost("register")]
     public IActionResult CreateNewAccount(AccountCreateDTO newAccountDTO)
