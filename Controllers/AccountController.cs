@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using TodoList.Data;
+using TodoList.DTOs;
 using TodoList.Models;
 
 namespace TodoList.Controllers;
@@ -21,12 +22,12 @@ public class AccountController : ControllerBase
 
     #region Endpoints
     [HttpPost("register")]
-    public IActionResult CreateNewAccount(string username, string password, string passwordConfirmation)
+    public IActionResult CreateNewAccount(AccountCreateDTO newAccountDTO)
     {
         byte[] passwordSalt = RandomNumberGenerator.GetBytes(128 / 8);
-        byte[] passWordHash = KeyDerivation.Pbkdf2(password, passwordSalt, KeyDerivationPrf.HMACSHA256, 100_000, 256/8);
+        byte[] passWordHash = KeyDerivation.Pbkdf2(newAccountDTO.Password, passwordSalt, KeyDerivationPrf.HMACSHA256, 100_000, 256/8);
 
-        Account newAccount = new Account(username, passWordHash, passwordSalt);
+        Account newAccount = new Account(newAccountDTO.Username, passWordHash, passwordSalt);
         newAccount.PasswordIterationCount = 100_000;
         _dbContext.Accounts.Add(newAccount);
         _dbContext.SaveChanges();
