@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using TodoList.Data;
+using TodoList.Models;
 
 namespace TodoList.Controllers;
 
@@ -6,11 +10,27 @@ namespace TodoList.Controllers;
 [Route("[controller]")]
 public class AccountController : ControllerBase
 {
+    #region Controller setup
+    private readonly TodoListDbContext _dbContext;
+
+    public AccountController()
+    {
+        _dbContext = new TodoListDbContext();
+    }
+    #endregion
+
     #region Endpoints
     [HttpPost("register")]
-    public IActionResult CreateNewAccount(string username, string password1, string password2)
+    public IActionResult CreateNewAccount(string username, string password, string passwordConfirmation)
     {
-        throw new NotImplementedException();
+        byte[] passwordSalt = RandomNumberGenerator.GetBytes(128 / 8);
+        byte[] passWordHash = KeyDerivation.Pbkdf2(password, passwordSalt, KeyDerivationPrf.HMACSHA256, 100_000, 256/8);
+
+        Account newAccount = new Account(username, passWordHash, passwordSalt);
+        newAccount.PasswordIterationCount = 100_000;
+        _dbContext.Accounts.Add(newAccount);
+        _dbContext.SaveChanges();
+        return Ok();
     }
     
     [HttpPost("login")]
