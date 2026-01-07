@@ -21,4 +21,9 @@ public class TodoListDbContext : DbContext
     {
         optionsBuilder.UseSqlite($"Data source={DbPath}");
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Account>().HasIndex(item => item.AccountId).IsUnique();
+    }
 }
