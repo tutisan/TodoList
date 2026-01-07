@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Data;
+using TodoList.DTOs;
 using TodoList.Models;
 
 namespace TodoList.Controllers;
@@ -19,11 +20,12 @@ public class TodoListController : ControllerBase
 
     #region Endpoints
     [HttpPost]
-    public IActionResult CreateTaskItem(TaskItem taskItem)
+    public IActionResult CreateTaskItem(TodoItemCreateDTO createNewTaskItem)
     {
-        _dbContext.TaskItems.Add(taskItem);
+        var newTaskItem = new TaskItem(createNewTaskItem.Name, createNewTaskItem.IsDone);
+        _dbContext.TaskItems.Add(newTaskItem);
         _dbContext.SaveChanges();
-        return Created("Task created", taskItem);
+        return Created("Task created", createNewTaskItem);
     }
 
     [HttpGet]
