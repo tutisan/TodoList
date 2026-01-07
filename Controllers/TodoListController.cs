@@ -20,7 +20,7 @@ public class TodoListController : ControllerBase
 
     #region Endpoints
     [HttpPost]
-    public IActionResult CreateTaskItem(TodoItemCreateDTO createNewTaskItem)
+    public IActionResult CreateTaskItem(TaskItemCreateDTO createNewTaskItem)
     {
         var newTaskItem = new TaskItem(createNewTaskItem.Name, createNewTaskItem.IsDone);
         _dbContext.TaskItems.Add(newTaskItem);
