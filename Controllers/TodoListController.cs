@@ -31,9 +31,8 @@ public class TodoListController : ControllerBase
     [HttpGet]
     public IActionResult GetAllTaskItems()
     {
-        var items = _dbContext.TaskItems.ToList();
-        var detailDTOs = items.ConvertAll(item => new TaskItemDetailDTO(item.Name, item.IsDone));
-        return Ok(detailDTOs.ToList());
+        var items = _dbContext.TaskItems;
+        return Ok(items.ToList());
     }
 
     [HttpGet("done")]
