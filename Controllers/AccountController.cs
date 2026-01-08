@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using TodoList.Data;
 using TodoList.DTOs;
 using TodoList.Models;
+using TodoList.Services;
 
 namespace TodoList.Controllers;
 
@@ -69,9 +70,27 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("login")]
-    public IActionResult Login(string username, string password)
+    public IActionResult Login(AccountCreateDTO login)
     {
-        throw new NotImplementedException();
+        var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == login.Username);
+
+        if (user != null)
+        {
+            byte[] passwordHash = KeyDerivation.Pbkdf2(
+                login.Password,
+                user.PasswordSalt,
+                KeyDerivationPrf.HMACSHA256,
+                user.PasswordIterationCount,
+                256/8
+            );
+
+            if (user.PasswordHash.SequenceEqual(passwordHash))
+            {
+                return Ok(AuthService.GenerateJWT(user));
+            }
+        }
+
+        return Unauthorized();
     }
 
     [HttpPut("change_password")]
