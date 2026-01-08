@@ -62,11 +62,12 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public IActionResult CreateNewAccount(AccountCreateDTO newAccountDTO)
     {
-        byte[] passwordSalt = RandomNumberGenerator.GetBytes(128 / 8);
-        byte[] passWordHash = KeyDerivation.Pbkdf2(newAccountDTO.Password, passwordSalt, KeyDerivationPrf.HMACSHA256, 100_000, 256/8);
+        var hashAndSalt = new HashAndSalt(newAccountDTO.Password);
 
-        Account newAccount = new Account(newAccountDTO.Username, passWordHash, passwordSalt);
-        newAccount.PasswordIterationCount = 100_000;
+        var newAccount = new Account(newAccountDTO.Username, hashAndSalt.PasswordHash, hashAndSalt.PasswordSalt)
+        {
+            PasswordIterationCount = hashAndSalt.IterationCount
+        };
         _dbContext.Accounts.Add(newAccount);
         _dbContext.SaveChanges();
         return Ok();
@@ -94,10 +95,10 @@ public class AccountController : ControllerBase
 
         if (changePassword.Password == changePassword.PasswordConfirm)
         {
-            HashAndSalt passwordInfo = new HashAndSalt(changePassword.Password);
-            user.PasswordIterationCount = passwordInfo.IterationCount;
-            user.PasswordHash = passwordInfo.PasswordHash;
-            user.PasswordSalt = passwordInfo.PasswordSalt;
+            HashAndSalt hashAndSalt = new HashAndSalt(changePassword.Password);
+            user.PasswordIterationCount = hashAndSalt.IterationCount;
+            user.PasswordHash = hashAndSalt.PasswordHash;
+            user.PasswordSalt = hashAndSalt.PasswordSalt;
             _dbContext.SaveChanges();
 
             return Ok("Password changed");
