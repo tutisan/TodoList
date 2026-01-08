@@ -39,7 +39,7 @@ public class AccountController : ControllerBase
 
     #region Endpoints
     [HttpPost("register")]
-    public IActionResult CreateNewAccount(AccountCreateDTO newAccountDTO)
+    public IActionResult CreateNewAccount(RegisterDTO newAccountDTO)
     {
         var hashAndSalt = new HashAndSalt(newAccountDTO.Password);
 
@@ -53,7 +53,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("login")]
-    public IActionResult Login(AccountCreateDTO login)
+    public IActionResult Login(RegisterDTO login)
     {
         var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == login.Username);
 
