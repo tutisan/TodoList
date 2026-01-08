@@ -91,7 +91,12 @@ public class AccountController : ControllerBase
     public IActionResult UpdatePassword(AccountChangePasswordDTO changePassword)
     {
         var loggedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var user = _dbContext.Accounts.First(u => u.Username == loggedUser);
+        var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == loggedUser);
+
+        if (user == null)
+        {
+            return Unauthorized("User doesn't exist");
+        }
 
         if (changePassword.Password == changePassword.PasswordConfirm)
         {
@@ -104,7 +109,7 @@ public class AccountController : ControllerBase
             return Ok("Password changed");
         }
 
-        return Ok("Passwords are not equal");
+        return Unauthorized("Passwords are not equal");
     }
 
     [Authorize]
