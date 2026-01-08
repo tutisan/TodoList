@@ -53,7 +53,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("login")]
-    public IActionResult Login(RegisterDTO login)
+    public IActionResult Login(LoginDTO login)
     {
         var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == login.Username);
 
