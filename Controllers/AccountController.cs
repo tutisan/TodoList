@@ -10,6 +10,20 @@ using TodoList.Services;
 
 namespace TodoList.Controllers;
 
+readonly struct HashAndSalt
+{
+    public readonly int IterationCount;
+    public readonly byte[] PasswordHash;
+    public readonly byte[] PasswordSalt;
+
+    public HashAndSalt(string password, int iterationCount = 100_000)
+    {
+        IterationCount = iterationCount;
+        PasswordSalt = RandomNumberGenerator.GetBytes(128 / 8);
+        PasswordHash = KeyDerivation.Pbkdf2(password, PasswordSalt, KeyDerivationPrf.HMACSHA256, IterationCount, 256 / 8);
+    }
+}
+
 [ApiController]
 [Route("[controller]")]
 public class AccountController : ControllerBase
@@ -80,12 +94,10 @@ public class AccountController : ControllerBase
 
         if (changePassword.Password == changePassword.PasswordConfirm)
         {
-            byte[] passwordSalt = RandomNumberGenerator.GetBytes(128 / 8);
-            byte[] passwordHash = KeyDerivation.Pbkdf2(changePassword.Password, passwordSalt, KeyDerivationPrf.HMACSHA256, 100_000, 256/8);
-
-            user.PasswordIterationCount = 100_000;
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
+            HashAndSalt passwordInfo = new HashAndSalt(changePassword.Password);
+            user.PasswordIterationCount = passwordInfo.IterationCount;
+            user.PasswordHash = passwordInfo.PasswordHash;
+            user.PasswordSalt = passwordInfo.PasswordSalt;
             _dbContext.SaveChanges();
 
             return Ok("Password changed");
