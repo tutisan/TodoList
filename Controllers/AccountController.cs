@@ -30,30 +30,17 @@ public class AccountController : ControllerBase
         return Ok(_dbContext.Accounts.ToList());
     }
 
-    [HttpPost("debug/validate_login")]
-    public IActionResult ValidateLogin(AccountCreateDTO createDTO)
+    private bool ValidatePassword(Account user, string password)
     {
-        var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == createDTO.Username);
+        byte[] passwordHash = KeyDerivation.Pbkdf2(
+            password,
+            user.PasswordSalt,
+            KeyDerivationPrf.HMACSHA256,
+            user.PasswordIterationCount,
+            256/8
+        );
 
-        if (user != null)
-        {
-            byte[] passwordHash = KeyDerivation.Pbkdf2(
-                createDTO.Password,
-                user.PasswordSalt,
-                KeyDerivationPrf.HMACSHA256,
-                user.PasswordIterationCount,
-                256/8
-            );
-            
-            if (user.PasswordHash.SequenceEqual(passwordHash))
-            {
-                return Ok("Login is valid.");
-            }
-
-            return Ok("Login is invalid.");
-        }
-
-        return Ok("User not found.");
+        return user.PasswordHash.SequenceEqual(passwordHash);
     }
     #endregion
 
@@ -76,20 +63,9 @@ public class AccountController : ControllerBase
     {
         var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == login.Username);
 
-        if (user != null)
+        if (user != null && ValidatePassword(user, login.Password))
         {
-            byte[] passwordHash = KeyDerivation.Pbkdf2(
-                login.Password,
-                user.PasswordSalt,
-                KeyDerivationPrf.HMACSHA256,
-                user.PasswordIterationCount,
-                256/8
-            );
-
-            if (user.PasswordHash.SequenceEqual(passwordHash))
-            {
-                return Ok(AuthService.GenerateJWT(user));
-            }
+            return Ok(AuthService.GenerateJWT(user));
         }
 
         return Unauthorized();
