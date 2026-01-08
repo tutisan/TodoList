@@ -67,7 +67,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPut("change_password")]
-    public IActionResult UpdatePassword(AccountChangePasswordDTO changePassword)
+    public IActionResult UpdatePassword(ChangePasswordDTO changePassword)
     {
         var loggedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var user = _dbContext.Accounts.FirstOrDefault(u => u.Username == loggedUser);
