@@ -37,27 +37,6 @@ public class AccountController : ControllerBase
     }
     #endregion
 
-    #region Debug endpoints
-    [HttpGet("debug/list_users")]
-    public IActionResult ListUserAndPasswords()
-    {
-        return Ok(_dbContext.Accounts.ToList());
-    }
-
-    private bool ValidatePassword(Account user, string password)
-    {
-        byte[] passwordHash = KeyDerivation.Pbkdf2(
-            password,
-            user.PasswordSalt,
-            KeyDerivationPrf.HMACSHA256,
-            user.PasswordIterationCount,
-            256/8
-        );
-
-        return user.PasswordHash.SequenceEqual(passwordHash);
-    }
-    #endregion
-
     #region Endpoints
     [HttpPost("register")]
     public IActionResult CreateNewAccount(AccountCreateDTO newAccountDTO)
@@ -121,6 +100,21 @@ public class AccountController : ControllerBase
         _dbContext.Accounts.Remove(user);
         _dbContext.SaveChanges();
         return Ok("Account deleted");
+    }
+    #endregion
+
+    #region Util
+    private static bool ValidatePassword(Account user, string password)
+    {
+        byte[] passwordHash = KeyDerivation.Pbkdf2(
+            password,
+            user.PasswordSalt,
+            KeyDerivationPrf.HMACSHA256,
+            user.PasswordIterationCount,
+            256/8
+        );
+
+        return user.PasswordHash.SequenceEqual(passwordHash);
     }
     #endregion
 }
