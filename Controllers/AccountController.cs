@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using TodoList.Data;
 using TodoList.DTOs;
@@ -93,10 +95,27 @@ public class AccountController : ControllerBase
         return Unauthorized();
     }
 
+    [Authorize]
     [HttpPut("change_password")]
-    public IActionResult UpdatePassword(string newPassword)
+    public IActionResult UpdatePassword(AccountChangePasswordDTO changePassword)
     {
-        throw new NotImplementedException();
+        var loggedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var user = _dbContext.Accounts.First(u => u.Username == loggedUser);
+
+        if (changePassword.Password == changePassword.PasswordConfirm)
+        {
+            byte[] passwordSalt = RandomNumberGenerator.GetBytes(128 / 8);
+            byte[] passwordHash = KeyDerivation.Pbkdf2(changePassword.Password, passwordSalt, KeyDerivationPrf.HMACSHA256, 100_000, 256/8);
+
+            user.PasswordIterationCount = 100_000;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            _dbContext.SaveChanges();
+
+            return Ok("Password changed");
+        }
+
+        return Ok("Passwords are not equal");
     }
 
     [HttpDelete("delete")]
