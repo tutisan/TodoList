@@ -56,7 +56,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpPut("{taskId}")]
-    public IActionResult UpdateTaskItem(Guid taskId, TaskItemChangeDTO taskItemChange)
+    public IActionResult UpdateTaskItem(Guid taskId, UpdateTask taskItemChange)
     {
         var item = _dbContext.TaskItems.Find(taskId);
         
