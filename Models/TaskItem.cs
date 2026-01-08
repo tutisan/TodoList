@@ -1,15 +1,9 @@
 
 namespace TodoList.Models;
 
-public class TaskItem
+public class TaskItem(string name, bool isDone)
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
-    public bool IsDone { get; set; }
-
-    public TaskItem(string name, bool isDone)
-    {
-        Name = name;
-        IsDone = isDone;
-    }
+    public string Name { get; set; } = name;
+    public bool IsDone { get; set; } = isDone;
 }
