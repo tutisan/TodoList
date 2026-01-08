@@ -118,10 +118,15 @@ public class AccountController : ControllerBase
         return Ok("Passwords are not equal");
     }
 
+    [Authorize]
     [HttpDelete("delete")]
     public IActionResult DeleteAccount()
     {
-        throw new NotImplementedException();
+        var loggedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var user = _dbContext.Accounts.First(u => u.Username == loggedUser);
+        _dbContext.Accounts.Remove(user);
+        _dbContext.SaveChanges();
+        return Ok("Account deleted");
     }
     #endregion
 }
