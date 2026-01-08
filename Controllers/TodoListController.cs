@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Data;
 using TodoList.DTOs;
@@ -87,6 +88,14 @@ public class TodoListController : ControllerBase
         }
 
         return NotFound();
+    }
+    #endregion
+
+    #region Util
+    private Account? GetAuthenticatedUser()
+    {
+        var usernameInJWT = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return _dbContext.Accounts.FirstOrDefault(u => u.Username == usernameInJWT);
     }
     #endregion
 }
