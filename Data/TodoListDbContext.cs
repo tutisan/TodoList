@@ -24,6 +24,9 @@ public class TodoListDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>().HasIndex(item => item.Username).IsUnique();
+        modelBuilder.Entity<Account>(e =>
+        {
+            e.HasIndex(one => one.Username).IsUnique();
+        });
     }
 }
