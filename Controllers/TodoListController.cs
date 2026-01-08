@@ -49,7 +49,7 @@ public class TodoListController : ControllerBase
 
         if (item != null)
         {
-            return Ok(new TaskItemDetailDTO(item.Name, item.IsDone));
+            return Ok(new TaskDetailDTO(item.Name, item.IsDone));
         }
 
         return NotFound();
