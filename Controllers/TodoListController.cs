@@ -19,6 +19,15 @@ public class TodoListController : ControllerBase
     }
     #endregion
 
+    #region Debug endpoints
+    [HttpGet("debug/list")]
+    public IActionResult ListAllTasks()
+    {
+        var allTasks = _dbContext.TaskItems.ToList();
+        return Ok(allTasks);
+    }
+    #endregion
+
     #region Endpoints
     [HttpPost]
     public IActionResult CreateTaskItem(CreateTaskDTO createNewTaskItem)
