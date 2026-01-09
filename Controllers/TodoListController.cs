@@ -87,7 +87,7 @@ public class TodoListController : ControllerBase
         var loggedUser = GetAuthenticatedUser();
         var item = _dbContext.TaskItems.Find(taskId);
 
-        if (item != null && loggedUser != null && item.Author == loggedUser)
+        if (item != null && item.Author == loggedUser)
         {
             return Ok(new TaskDetailDTO(item.Name, item.IsDone));
         } 
