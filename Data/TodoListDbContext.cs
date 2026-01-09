@@ -24,13 +24,13 @@ public class TodoListDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>(e =>
-        {
-            e.HasIndex(one => one.Username).IsUnique();
-            e.HasMany(one => one.Tasks)
-                .WithOne(two => two.Author)
-                .HasForeignKey(two => two.AuthorId)
-                .IsRequired();
-        });
+        modelBuilder.Entity<Account>()
+            .HasIndex(one => one.Username)
+            .IsUnique();
+        modelBuilder.Entity<Account>()
+            .HasMany(one => one.Tasks)
+            .WithOne(two => two.Author)
+            .HasForeignKey(two => two.AuthorId)
+            .IsRequired();
     }
 }
