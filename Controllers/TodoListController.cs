@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Data;
 using TodoList.DTOs;
@@ -29,13 +30,24 @@ public class TodoListController : ControllerBase
     #endregion
 
     #region Endpoints
+    [Authorize]
     [HttpPost]
     public IActionResult CreateTaskItem(CreateTaskDTO createNewTaskItem)
     {
-        var newTaskItem = new TaskItem(createNewTaskItem.Name, createNewTaskItem.IsDone);
-        _dbContext.TaskItems.Add(newTaskItem);
-        _dbContext.SaveChanges();
-        return Created("Task created", createNewTaskItem);
+        var loggedUser = GetAuthenticatedUser();
+
+        if (loggedUser != null)
+        {
+            var newTaskItem = new TaskItem(createNewTaskItem.Name, createNewTaskItem.IsDone)
+            {
+                Author = loggedUser
+            };
+            _dbContext.TaskItems.Add(newTaskItem);
+            _dbContext.SaveChanges();
+            return Created("Task created", createNewTaskItem);
+        }
+
+        return Unauthorized();
     }
 
     [HttpGet]
@@ -60,7 +72,7 @@ public class TodoListController : ControllerBase
         if (item != null)
         {
             return Ok(new TaskDetailDTO(item.Name, item.IsDone));
-        }
+        } 
 
         return NotFound();
     }
