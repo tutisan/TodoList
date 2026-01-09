@@ -65,11 +65,19 @@ public class TodoListController : ControllerBase
         return Unauthorized();
     }
 
+    [Authorize]
     [HttpGet("done")]
     public IActionResult GetDoneTaskItems()
     {
-        var items = _dbContext.TaskItems.Where(item => item.IsDone == true);
-        return Ok(items.ToList());
+        var loggedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (loggedUser != null)
+        {
+            var items = _dbContext.TaskItems.Where(item => item.IsDone == true && item.Author.Username == loggedUser);
+            return Ok(items.ToList());
+        }
+
+        return Unauthorized();
     }
 
     [HttpGet("{taskId}")]
