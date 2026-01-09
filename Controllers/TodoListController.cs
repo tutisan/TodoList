@@ -50,11 +50,19 @@ public class TodoListController : ControllerBase
         return Unauthorized();
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetAllTaskItems()
     {
-        var items = _dbContext.TaskItems;
-        return Ok(items.ToList());
+        var loggedUser = GetAuthenticatedUser();
+
+        if (loggedUser != null)
+        {
+            var items = loggedUser.Tasks;
+            return Ok(items.ToList());
+        }
+
+        return Unauthorized();
     }
 
     [HttpGet("done")]
