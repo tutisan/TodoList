@@ -95,12 +95,14 @@ public class TodoListController : ControllerBase
         return NotFound();
     }
 
+    [Authorize]
     [HttpPut("{taskId}")]
     public IActionResult UpdateTaskItem(Guid taskId, UpdateTask taskItemChange)
     {
+        var loggedUser = GetAuthenticatedUser();
         var item = _dbContext.TaskItems.Find(taskId);
         
-        if (item != null)
+        if (item != null && item.Author == loggedUser)
         {
             if (taskItemChange.Name != null)
             {
@@ -108,7 +110,7 @@ public class TodoListController : ControllerBase
             }
             item.IsDone = taskItemChange.IsDone;
             _dbContext.SaveChanges();
-            return Ok(item);
+            return Ok();
         }
 
         return NotFound();
