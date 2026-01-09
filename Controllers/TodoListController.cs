@@ -54,12 +54,12 @@ public class TodoListController : ControllerBase
     [HttpGet]
     public IActionResult GetAllTaskItems()
     {
-        var loggedUser = GetAuthenticatedUser();
+        var loggedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (loggedUser != null)
         {
-            var items = loggedUser.TaskItems;
-            return Ok(items);
+            var items = _dbContext.TaskItems.Where(t => t.Author.Username == loggedUser);
+            return Ok(items.ToList());
         }
 
         return Unauthorized();
