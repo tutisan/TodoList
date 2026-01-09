@@ -27,6 +27,9 @@ public class TodoListDbContext : DbContext
         modelBuilder.Entity<Account>(e =>
         {
             e.HasIndex(one => one.Username).IsUnique();
+            e.HasMany(one => one.Tasks)
+                .WithOne(two => two.Author)
+                .HasForeignKey(two => two.AuthorId);
         });
     }
 }
