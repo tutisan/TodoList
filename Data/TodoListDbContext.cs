@@ -27,7 +27,7 @@ public class TodoListDbContext : DbContext
         modelBuilder.Entity<Account>(e =>
         {
             e.HasIndex(one => one.Username).IsUnique();
-            e.HasMany(one => one.Tasks)
+            e.HasMany(one => one.TaskItems)
                 .WithOne(two => two.Author)
                 .HasForeignKey(two => two.AuthorId)
                 .IsRequired();

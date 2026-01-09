@@ -8,5 +8,5 @@ public class Account(string username, byte[] passwordHash, byte[] passwordSalt)
     public byte[] PasswordHash { get; set; } = passwordHash;
     public byte[] PasswordSalt { get; set; } = passwordSalt;
     public int PasswordIterationCount { get; set; }
-    public ICollection<TaskItem> Tasks { get; set; }
+    public ICollection<TaskItem> TaskItems { get; set; } = [];
 }

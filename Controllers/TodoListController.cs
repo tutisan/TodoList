@@ -58,8 +58,8 @@ public class TodoListController : ControllerBase
 
         if (loggedUser != null)
         {
-            var items = loggedUser.Tasks;
-            return Ok(items.ToList());
+            var items = loggedUser.TaskItems;
+            return Ok(items);
         }
 
         return Unauthorized();
