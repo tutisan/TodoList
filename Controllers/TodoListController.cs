@@ -119,9 +119,10 @@ public class TodoListController : ControllerBase
     [HttpDelete("{taskId}")]
     public IActionResult DeleteTaskItem(Guid taskId)
     {
+        var loggedUser = GetAuthenticatedUser();
         var item = _dbContext.TaskItems.Find(taskId);
 
-        if (item != null)
+        if (item != null && item.Author == loggedUser)
         {
             _dbContext.TaskItems.Remove(item);
             _dbContext.SaveChanges();
