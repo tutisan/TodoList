@@ -1,19 +1,8 @@
 
 namespace TodoList.DTOs;
 
-public class CreateTaskDTO
+public class CreateTaskDTO(string name, bool isDone)
 {
-    public string Name { get; set; }
-    public bool IsDone { get; set; }
-
-    public CreateTaskDTO(string name, bool isDone)
-    {
-        Name = name;
-        IsDone = isDone;
-    }
-
-    public CreateTaskDTO(string name)
-    {
-        Name = name;
-    }
+    public string Name { get; set; } = name;
+    public bool IsDone { get; set; } = isDone;
 }
